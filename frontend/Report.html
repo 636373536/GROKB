@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chimshield-home</title>
+    <link rel="icon"type="image/png" href="https://i.postimg.cc/T2kMz4kS/logo.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .booking-confirmation {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .report-success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://i.postimg.cc/MG0gdPM9/R-2.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+        
+        .hero-content {
+            
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 4rem;
+            margin-top: 2rem;
+    
+        }
+        
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 5rem;
+            margin-top: 2rem;
+        }
+        
+        .search-box {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: -2rem auto 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .team-card .btn-primary {
+            transition: all 0.3s;
+        }
+        
+        .team-card .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .team-card .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .booking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .booking-step {
+            text-align: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background-color: #ddd;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .step-active .step-number {
+            background-color: #2da0a8;
+            color: white;
+        }
+        
+        .step-complete .step-number {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      display: none;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    } 
+        .booking-steps::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #ddd;
+            z-index: 0;
+        }
+        
+        .step-progress {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 2px;
+            background-color: #2da0a8;
+            z-index: 1;
+            transition: width 0.3s;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: #6c757d;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        
+        .teams {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .team-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .team-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .team-info {
+            padding: 1.5rem;
+        }
+        
+        .team-info h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+        
+        .team-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            color: #ffc107;
+        }
+        
+        .team-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .report-incident {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 4rem;
+        }
+        
+        .report-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #d1145a;
+        }
+        
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .contact-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        .logout{
+            background-color: #e74c3c;
+            color: white;
+            width: 60px;
+            height: fit-content;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .logout:hover {
+            background-color: #f5f1f0;
+        }
+        
+        .contact-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        
+        .social-links a:hover {
+            color: var(--accent);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .hero {
+                padding: 3rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .search-box {
+                margin: -1rem auto 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="#" class="logo">Chim-Shield</a>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#teams">Teams</a>
+                <a href="#report">Report</a>
+                <a href="#contact">Contact</a>
+                <a href="./trial.html" class="logout" >Logout</a>
+            </div>
+
+        </nav>
+    </header>
+    
+    <section class="hero">
+       
+        <div class="hero-content">
+            <h1>Book Professional Teams for Your Events</h1>
+            <p>Find the perfect team for any occasion and manage everything in one place</p>
+          </div>
+         </div>
+    </section>
+    
+    <div class="search-box">
+        <form class="search-form" id="bookingForm">
+            <div class="form-group">
+                <label for="event-type">Event Type</label>
+                <select id="event-type" class="form-control" required>
+                    <option value="">Select event type</option>
+                    <option value="wedding">Wedding</option>
+                    <option value="corporate">Corporate Event</option>
+                    <option value="private">Private Party</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" class="form-control" placeholder="Enter location" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="guests">Number of Guests</label>
+                <input type="number" id="guests" class="form-control" placeholder="e.g. 100" required>
+            </div>
+            <div class="form-group">
+                <label for="team-select">Select Team</label>
+                <select id="team-select" class="form-control" required>
+                    <option value="">Select security team</option>
+                    <!-- Will be populated by JavaScript -->
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-end;">Book Team</button>
+        </form>
+    </div>
+    <div class="booking-confirmation" id="bookingConfirmation">
+        <h4>Booking Confirmed!</h4>
+        <p>Your booking ID: <strong id="confirmedBookingId"></strong></p>
+        <p>Team: <strong id="confirmedTeamName"></strong></p>
+        <p>Amount: <strong id="confirmedAmount"></strong></p>
+    </div>
+    
+    <div class="container">
+        <section id="features">
+            <div class="section-title">
+                <h2>Why Choose CHIM-SHIELD </h2>
+                <p>We provide comprehensive solutions for all your event management needs</p>
+            </div>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Easy Booking</h3>
+                    <p>Book professional teams with just a few clicks. Manage all your events in one place.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Incident Reporting</h3>
+                    <p>Report any issues during your event through multiple channels including messaging and calls.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Team Ratings</h3>
+                    <p>Rate and review teams after your event to help others make informed decisions.</p>
+                </div>
+            </div>
+        </section>
+        <div class="container">
+            <div class="booking-steps" id="bookingSteps">
+                <div class="step-progress" id="stepProgress"></div>
+                <div class="booking-step step-active" id="step1">
+                    <div class="step-number">1</div>
+                    <div>Select Team</div>
+                </div>
+                <div class="booking-step" id="step2">
+                    <div class="step-number">2</div>
+                    <div>Booking Details</div>
+                </div>
+                <div class="booking-step" id="step3">
+                    <div class="step-number">3</div>
+                    <div>Confirmation</div>
+                </div>
+            </div>
+        <section id="teams">
+            <div class="section-title">
+                <h2>Available Teams</h2>
+                <p>Browse through our professional teams ready for your next event</p>
+            </div>
+            <div class="teams">
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/kG5rVQ5f/01.jpg" alt="Event Team" class="team-img">
+                    <div class="team-info">
+                        <h3>VIPs Services</h3>
+                        <div class="team-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.7 (128)</span>
+                        </div>
+                        <div class="team-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Lilongwe,Blantyre,Mzuzu</span>
+                            <span> k180,000/day</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Book Now</button>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/Rhh8CvPY/07.png" alt="Corporate Team" class="team-img">
+                    <div class="team-info">
+                        <h3>Residential buildings </h3>
+                        <div class="team-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>5.0 (89)</span>
+                        </div>
+                        <div class="team-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Lilongwe,Blantyre,Mzuzu</span>
+                            <span> k100,000/day</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Book Now</button>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/Ssy356ck/06.png" alt="Wedding Team" class="team-img">
+                    <div class="team-info">
+                        <h3>Wedding Specialists</h3>
+                        <div class="team-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>4.2 (215)</span>
+                        </div>
+                        <div class="team-meta">
+                            <span><i class="fas fa-map-marker-alt"></i>Lilongwe,Blantyre,Mzuzu</span>
+                            <span> k150,000/day</span>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="report">
+            <div class="section-title">
+                <h2>Report an Incident</h2>
+                <p>Let us know if you experienced any issues during your event</p>
+            </div>
+            <div class="report-incident">
+                <form class="report-form" id="reportForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="booking-id">Booking ID</label>
+                            <input type="text" id="booking-id" class="form-control" placeholder="Enter your booking ID" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="incident-type">Incident Type</label>
+                            <select id="incident-type" class="form-control" required>
+                                <option value="">Select incident type</option>
+                                <option value="safety">Safety Concern</option>
+                                <option value="service">Poor Service</option>
+                                <option value="behavior">Unprofessional Behavior</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="incident-details">Incident Details</label>
+                        <textarea id="incident-details" class="form-control" rows="5" placeholder="Please describe the incident in detail" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="evidence">Upload Evidence (Optional)</label>
+                        <input type="file" id="evidence" class="form-control">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancelReport">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Submit Report</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <div class="section-title">
+                <h2>Contact Support</h2>
+                <p>Reach out to us through multiple channels for any questions or urgent matters</p>
+            </div>
+            <div class="contact-methods">
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h3>Live Chat</h3>
+                    <p>Chat with our support team in real-time for immediate assistance.</p>
+                    <button onclick="window.location.href='./chats.html'" class="btn btn-primary">Start Chat</button>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Phone Call</h3>
+                    <p>Call our 24/7 support line for urgent matters.</p>
+                    <button onclick="window.location.href='./chats.html'" class="btn btn-primary">Call Now</button>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p>Send us an email and we'll respond within 24 hours.</p>
+                    <button onclick="window.location.href='mailto: cshield@gmail.com'"  class="btn btn-primary">Send Email</button>
+                </div>
+            </div>
+        </section>
+        <div class="report-success" id="reportSuccess">
+            <h4>Report Submitted Successfully!</h4>
+            <p>Your report ID: <strong id="reportIdDisplay"></strong></p>
+            <p>We will investigate and get back to you shortly.</p>
+        </div>
+        <section id="rating">
+            <div class="section-title">
+                <h2>Rate Your Experience</h2>
+                <p>Help us improve by rating the team you booked</p>
+            </div>
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+              </div>
+            
+            <div class="report-incident">
+                <form class="report-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rating-booking-id">Booking ID</label>
+                            <input type="text" id="rating-booking-id" class="form-control" placeholder="Enter your booking ID">
+                        </div>
+                        <div class="form-group">
+                            <label>Overall Rating</label>
+                            <div style="display: flex; gap: 10px; font-size: 1.5rem; color: #ffc107;">
+                                <i class="far fa-star" data-rating="1"></i>
+                                <i class="far fa-star" data-rating="2"></i>
+                                <i class="far fa-star" data-rating="3"></i>
+                                <i class="far fa-star" data-rating="4"></i>
+                                <i class="far fa-star" data-rating="5"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating-comments">Comments</label>
+                        <textarea id="rating-comments" class="form-control" rows="5" placeholder="Tell us about your experience"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Rating</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#">About Us</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">FAQ</a>
+        </div>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <p>&copy; 2025 Chim-Shield. All rights reserved.</p>
+    </footer>    
+    <script>
+        
+    document.addEventListener("DOMContentLoaded", async function() {
+      const token = localStorage.getItem("token");
+      let userId = null;
+      console.log("Loaded token:", token);
+
+      if (!token) {
+        console.warn("No token found, redirecting...");
+        window.location.href = '/trial.html';
+        return;
+      }
+
+      try {
+        // Verify token
+        console.log("Verifying token...");
+        const response = await fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        console.log("Verify response status:", response.status);
+
+        if (!response.ok) {
+          throw new Error('Invalid token');
+        }
+
+        const user = await response.json();
+        userId = user.id;
+        console.log("Authenticated user:", user);
+
+      } catch (error) {
+        console.error("Auth error:", error);
+        localStorage.removeItem("token");
+        window.location.href = '/trial.html';
+        return;
+      }
+
+      // Show loading
+      function showLoading(show) {
+        document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+      }
+
+      // Load teams
+      async function loadTeams() {
+        showLoading(true);
+        try {
+          const response = await fetch('/api/teams');
+          const teams = await response.json();
+          updateTeamSelect(teams);
+          updateTeamCards(teams);
+        } catch (error) {
+          console.error('Error loading teams:', error);
+          alert('Failed to load teams. Please try again.');
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      // Update team select dropdown
+      function updateTeamSelect(teams) {
+        const select = document.getElementById('team-select');
+        // Clear existing options except the first one
+        while (select.options.length > 1) {
+          select.remove(1);
+        }
+        
+        teams.forEach(team => {
+          const option = document.createElement('option');
+          option.value = team.id;
+          option.textContent = `${team.name} (K${team.price.toLocaleString()}/day)`;
+          select.appendChild(option);
+        });
+      }
+
+      // Update team cards with real data
+      function updateTeamCards(teams) {
+        const teamCards = document.querySelectorAll('.team-card');
+        teamCards.forEach((card, index) => {
+          if (teams[index]) {
+            const team = teams[index];
+            
+            // Update rating stars
+            const ratingStars = card.querySelector('.team-rating');
+            ratingStars.innerHTML = '';
+            const fullStars = Math.floor(team.rating);
+            const hasHalfStar = team.rating % 1 >= 0.5;
+            
+            for (let i = 0; i < 5; i++) {
+              const star = document.createElement('i');
+              if (i < fullStars) {
+                star.className = 'fas fa-star';
+              } else if (i === fullStars && hasHalfStar) {
+                star.className = 'fas fa-star-half-alt';
+              } else {
+                star.className = 'far fa-star';
+              }
+              ratingStars.appendChild(star);
+            }
+            
+            // Add rating number
+            const ratingText = document.createElement('span');
+            ratingText.textContent = ` ${team.rating.toFixed(1)} (${team.bookingsCount || 0})`;
+            ratingStars.appendChild(ratingText);
+            
+            // Update book now button
+            const bookBtn = card.querySelector('button');
+            bookBtn.onclick = function() {
+              document.getElementById('team-select').value = team.id;
+              document.getElementById('event-type').focus();
+              
+              // Scroll to booking form
+              document.getElementById('bookingForm').scrollIntoView({
+                behavior: 'smooth'
+              });
+            };
+          }
+        });
+      }
+
+      // Handle booking form submission
+      document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const teamId = document.getElementById('team-select').value;
+        const eventType = document.getElementById('event-type').value;
+        const location = document.getElementById('location').value;
+        const date = document.getElementById('date').value;
+        const guests = document.getElementById('guests').value;
+        const submitBtn = e.target.querySelector('button');
+
+        // Validate
+        if (!teamId || !eventType || !location || !date || !guests) {
+          alert('Please fill in all booking fields.');
+          return;
+        }
+
+        // Validate date
+        const selectedDate = new Date(date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate < today) {
+          alert('Please select a future date');
+          return;
+        }
+
+        // Show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Booking <i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+          const payload = {
+            teamId: teamId,
+            userId: userId,
+            eventType: eventType,
+            date: date,
+            guests: guests,
+            location: location
+          };
+          console.log('Booking payload:', payload);
+
+          const response = await fetch('/api/bookings', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const data = await response.json();
+          console.log('Booking response:', data);
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Booking failed. Please try again.');
+          }
+
+          // Show confirmation
+          document.getElementById('confirmedBookingId').textContent = data.id;
+          document.getElementById('confirmedTeamName').textContent = 
+            document.getElementById('team-select').options[document.getElementById('team-select').selectedIndex].text;
+          document.getElementById('confirmedAmount').textContent = `K${data.amount ? data.amount.toLocaleString() : 'N/A'}`;
+          document.getElementById('bookingConfirmation').style.display = 'block';
+
+          // Pre-fill booking ID in report form
+          document.getElementById('booking-id').value = data.id;
+
+          // Scroll to confirmation
+          document.getElementById('bookingConfirmation').scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+          console.error("Booking error:", error);
+          alert(error.message);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Book Team';
+        }
+      });
+
+      // Handle report form submission
+      document.getElementById('reportForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const bookingId = document.getElementById('booking-id').value;
+        const incidentType = document.getElementById('incident-type').value;
+        const details = document.getElementById('incident-details').value;
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        
+        // Show loading
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Submitting <i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+          const response = await fetch('/api/reports', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              bookingId,
+              userId,
+              incidentType,
+              details
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to submit report. Please try again.');
+          }
+          
+          const data = await response.json();
+          
+          // Show success message
+          document.getElementById('reportIdDisplay').textContent = data.id;
+          document.getElementById('reportSuccess').style.display = 'block';
+          document.getElementById('reportForm').reset();
+          
+          // Scroll to success message
+          document.getElementById('reportSuccess').scrollIntoView({ behavior: 'smooth' });
+          
+        } catch (error) {
+          console.error("Report error:", error);
+          alert(error.message);
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Submit Report';
+        }
+      });
+
+      // Initial load
+      loadTeams();
+    });
+    </script>
+</body>
+</html>

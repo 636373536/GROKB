@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>admin-panel</title>
+    <link rel="icon"type="image/png" href="https://i.postimg.cc/T2kMz4kS/logo.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        stats-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .stats-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stats-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .active-users {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .user-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #2ecc71;
+            margin-right: 5px;
+        }
+        
+        .chat-window {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 400px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .chat-header {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .chat-input button {
+            margin-left: 5px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #3498db;
+            color: white;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .received {
+            background: #f1f1f1;
+            align-self: flex-start;
+        }
+        
+        .sent {
+            background: #3498db;
+            color: white;
+            align-self: flex-end;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .timeline {
+            margin-bottom: 30px;
+        }
+        
+        .timeline h2 {
+            color: #ecf0f1;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .timeline ul {
+            list-style: none;
+        }
+        
+        .timeline li {
+            padding: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .timeline li:hover {
+            color: #3498db;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .date-display {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        .search-container {
+            display: flex;
+            flex-grow: 1;
+            margin: 0 20px;
+            gap: 10px;
+            max-width: 600px; /* Make search area longer */
+        }
+        
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-bar input,
+        #searchInput {
+            width: 350px; /* Make input longer */
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 60px; /* 60px border radius */
+            outline: none;
+        }
+        
+        .search-type {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .search-type button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        
+        .search-type button.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .search-btn {
+            padding: 8px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card h3 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .team-table {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0;
+    }
+    
+    .stat-label {
+      color: #7f8c8d;
+      font-size: 13px;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .badge-success {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .badge-danger {
+      background: #f8d7da;
+      color: #721c24;
+    }
+        .team-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .team-actions h3 {
+            margin: 0;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 600px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .member-list {
+            margin-top: 20px;
+        }
+        
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .member-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .add-member-btn {
+            margin-top: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }          .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <!-- Notification Toast -->
+    <div id="adminNotification" style="display:none;position:fixed;top:30px;right:30px;z-index:9999;background:#3498db;color:#fff;padding:16px 28px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.15);font-size:16px;min-width:220px;"></div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="timeline">
+                <h2>TIMELINE</h2>
+                <ul>
+                    <li>2025</li>
+                    <li>2026</li>
+                    <li>2027</li>
+                    <li>2028</li>
+                </ul>
+            </div>
+            
+<div class="timeline">
+  <h2>COMMUNICATION</h2>
+  <ul id="messagesList">
+    <li id="viewMessagesBtn">Messages <span id="newMessageBadge" class="badge" style="display:none">0</span></li>
+    <li id="viewCallsBtn">Call Logs</li>
+    <li id="viewReportsBtn">Reports</li>
+    <div id="incomingMessages"></div>
+  </ul>
+</div>
+        </div>
+        
+        <div class="main-content">
+            <div class="header">
+                <div class="date-display" id="currentDate"></div>
+                <div class="search-container">
+                    <input type="text" placeholder="Search bookings, reports..." id="searchInput">
+                    <button class="search-btn" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+            <!-- Quick stats section -->
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Bookings</div>
+                    <div class="stat-value" id="totalBookings">0</div>
+                    <div class="stat-label">All Time</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Bookings</div>
+                    <div class="stat-value" id="activeBookings">0</div>
+                    <div class="stat-label">Currently Ongoing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Reports</div>
+                    <div class="stat-value" id="pendingReports">0</div>
+                    <div class="stat-label">Require Attention</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Revenue</div>
+                    <div class="stat-value" id="totalRevenue">K0</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Registered Users</div>
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Registered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Users Booked Team</div>
+                    <div class="stat-value" id="usersBookedTeam">0</div>
+                    <div class="stat-label">Unique Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Booking IDs</div>
+                    <div class="stat-value" id="bookingIds">-</div>
+                    <div class="stat-label">All Booking IDs</div>
+                </div>
+    
+                <div class="stat-card">
+                    <div class="stat-label">Currently Logged In</div>
+                    <div class="stat-value" id="activeUsersCount">0</div>
+                    <div class="stat-label" id="activeUsersText">0 users online</div>
+                </div>
+            </div>
+            <!-- Add Team Table and Modal (keep existing) -->
+            <div class="team-table">
+                <div class="team-actions">
+                    <h3>Active Teams</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="addTeamBtn">Add Team</button>
+                    </div>
+                </div>
+                <table id="teamsTable">
+                    <thead>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>Type</th>
+                            <th>Leader</th>
+                            <th>Members</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamsTableBody">
+                        <!-- Teams will be added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="team-table" style="margin-top: 30px;">
+                <div class="team-actions">
+                    <h3>Recent Bookings</h3>
+                </div>
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Team</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <!-- Bookings will be added dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Team Modal -->
+    <div class="modal" id="addTeamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Team</h3>
+                <button class="close-btn" id="closeAddModal">&times;</button>
+            </div>
+            <form id="teamForm">
+                <div class="form-group">
+                    <label for="teamName">Team Name *</label>
+                    <input type="text" id="teamName" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamType">Type *</label>
+                    <input type="text" id="teamType" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamLocation">Location *</label>
+                    <input type="text" id="teamLocation" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamPrice">Price *</label>
+                    <input type="number" id="teamPrice" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="teamLeader">Team Leader *</label>
+                    <input type="text" id="teamLeader" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamDescription">Description</label>
+                    <textarea id="teamDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="teamRating">Initial Rating</label>
+                    <select id="teamRating">
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Good</option>
+                        <option value="3" selected>3 - Average</option>
+                        <option value="2">2 - Below Average</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
+                </div>
+                
+                <div class="member-list" id="memberList">
+                    <h4>Team Members *</h4>
+                    <div class="member-item">
+                        <input type="text" placeholder="Member name" class="member-name" required>
+                        <div class="member-actions">
+                            <button type="button" class="btn btn-danger btn-sm remove-member">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="add-member-btn" id="addMemberBtn">+ Add Member</button>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn" id="cancelAddBtn">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- View Team Modal -->
+    <div class="modal" id="viewTeamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewTeamTitle">Team Details</h3>
+                <button class="close-btn" id="closeViewModal">&times;</button>
+            </div>
+            <div id="teamDetails">
+                <p><strong>Team Name:</strong> <span id="viewTeamName"></span></p>
+                <p><strong>Team Leader:</strong> <span id="viewTeamLeader"></span></p>
+                <p><strong>Rating:</strong> <span id="viewTeamRating"></span>/5</p>
+                <p><strong>Description:</strong> <span id="viewTeamDescription"></span></p>
+                
+                <div class="member-list">
+                    <h4>Team Members</h4>
+                    <div id="viewTeamMembers">
+                        <!-- Members will be added dynamically -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" id="closeViewBtn">Close</button>
+            </div>
+        </div>
+    </div>
+     
+<!-- Messages Modal -->
+<div class="modal" id="messagesModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Customer Messages</h3>
+      <button class="close-btn" id="closeMessagesModal">&times;</button>
+    </div>
+    <div class="message-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="messagesTableBody">
+          <!-- Messages will be added dynamically -->
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" id="closeMessagesBtn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Calls Modal -->
+<div class="modal" id="callsModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Call Logs</h3>
+      <button class="close-btn" id="closeCallsModal">&times;</button>
+    </div>
+    <div class="call-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Duration</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="callsTableBody">
+          <!-- Calls will be added dynamically -->
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn" id="closeCallsBtn">Close</button>
+    </div>
+  </div>
+</div>
+    <!-- Add this chat window just before the closing </body> tag -->
+    <div class="chat-window" id="adminChatWindow" style="display:none;">
+        <div class="chat-header">
+            <span id="chatWithUser"></span>
+            <button class="close-btn" id="closeChatBtn">&times;</button>
+        </div>
+        <div class="chat-messages" id="adminChatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="adminChatInput" placeholder="Type a message...">
+            <button id="adminSendBtn">Send</button>
+        </div>
+    </div>
+    <div id="userChatsContainer"></div>
+    <div id="adminChatBotPanel" style="position:fixed;bottom:20px;left:20px;width:320px;height:300px;z-index:9999;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,0.15);display:flex;flex-direction:column;">
+  <div style="background:#2c3e50;color:#fff;padding:10px 16px;border-top-left-radius:8px;border-top-right-radius:8px;font-weight:bold;">
+    Incoming User Messages (Debug)
+  </div>
+  <div id="adminChatBotMessages" style="flex:1;overflow-y:auto;padding:10px;font-size:14px;"></div>
+</div>
+
+    <script>
+      // Admin WebSocket connection
+      let adminSocket;
+    let activeConversations = {};
+    let currentConversation = null;
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Check authentication
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/trial.html';
+        return;
+      }
+      
+      try {
+        // Verify admin role
+        const response = await fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Unauthorized');
+        }
+        
+        const userData = await response.json();
+        if (userData.role !== 'admin') {
+          alert('Access denied. Admins only.');
+          window.location.href = '/trial.html';
+          return;
+        }
+
+        // Set current date
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Connect WebSocket
+        connectAdminWebSocket();
+        
+        // Load initial data
+        loadDashboardData();
+        loadTeams();
+        loadBookings();
+        loadMessages();
+        
+      } catch (error) {
+        console.error('Initialization error:', error);
+        window.location.href = '/trial.html';
+      }
+    });
+    
+    // Connect to admin WebSocket
+    function connectAdminWebSocket() {
+      adminSocket = new WebSocket(`ws://${window.location.host}/admin`);
+      
+      adminSocket.onopen = function() {
+        console.log('Admin WebSocket connected');
+      };
+      
+      adminSocket.onclose = function() {
+        console.log('Admin WebSocket disconnected');
+        setTimeout(connectAdminWebSocket, 3000); // Reconnect after 3 seconds
+      };
+      
+      adminSocket.onerror = function(error) {
+        console.error('Admin WebSocket error:', error);
+      };
+      
+      adminSocket.onmessage = function(event) {
+        try {
+          const data = JSON.parse(event.data);
+          console.log('Received WebSocket message:', data);
+          
+          if (data.type === 'user_message' || data.type === 'new-message') {
+            // Handle incoming user message
+            const userId = data.userId;
+            const content = data.content;
+            const timestamp = data.timestamp || new Date().toISOString();
+
+            // Add to conversations
+            if (!activeConversations[userId]) {
+              activeConversations[userId] = { userId, messages: [] };
+            }
+            activeConversations[userId].messages.push({
+              userId,
+              content,
+              sender: data.sender || 'user',
+              timestamp
+            });
+
+            // Show chat window with the user only when a message is received
+            // Always set the chat header to the correct user
+            document.getElementById('chatWithUser').textContent = `Chat with User ${userId}`;
+            document.getElementById('adminChatWindow').style.display = 'block';
+            currentConversation = userId;
+
+            // Update UI if chat is open
+            renderChatMessages();
+
+            // Show notification
+            showAdminNotification(`New message from User ${userId}: ${content.substring(0,30)}...`);
+
+            // Update badge counter
+            const badge = document.getElementById('newMessageBadge');
+            const count = parseInt(badge.textContent || '0') + 1;
+            badge.textContent = count;
+            badge.style.display = 'inline';
+
+            // Update messages list
+            loadMessages();
+          }
+          // Debug: Show all user messages in the chat bot panel
+          if (data.type === 'user_message' || data.type === 'new-message') {
+            const userId = data.userId || data.from || data.user || data.senderId;
+            const content = data.content || data.message || data.text;
+            const timestamp = data.timestamp || new Date().toISOString();
+            if (userId && content) {
+              adminChatBotMessages.push({ userId, content, timestamp });
+              renderAdminChatBotMessages();
+            }
+          }
+      
+        } catch (err) {
+          console.error('Error handling WebSocket message:', err);
+        }
+      };
+    }
+    
+    // Handle incoming admin messages
+    function handleAdminMessage(data) {
+      console.log('Received admin WS message:', data); // DEBUG LOG
+      if (data.type === 'init-data') {
+        updateDashboard(data);
+      } 
+      else if (data.type === 'user-connected' || data.type === 'user-disconnected') {
+        updateUserCount(data.count);
+      } 
+      else if (data.type === 'new-message') {
+        // Add message to conversation and show notification if needed
+        const { userId, content, sender, timestamp, email, status } = data;
+        // Always update the conversation in memory
+        if (!activeConversations[userId]) {
+          activeConversations[userId] = { userId, messages: [] };
+        }
+        activeConversations[userId].messages.push({ userId, content, sender, timestamp, email, status });
+    
+        // If chat is open with this user, re-render
+        if (currentConversation === userId) renderChatMessages();
+    
+        // Always update the messages modal, even if not open
+        // Instead of only updating if modal is open, always call loadMessages to keep the sidebar in sync
+        loadMessages();
+    
+        // Show notification
+        showAdminNotification(`New message from User ${userId}: "${content ? content.substring(0, 30) : ''}${content && content.length > 30 ? '...' : ''}"`);
+      }
+      else if (data.type === 'incoming-call') {
+        showAdminNotification(`Incoming call from User ${data.userId}${data.number ? ' (' + data.number + ')' : ''}`);
+      }
+    }
+    
+    // Load dashboard data
+    async function loadDashboardData() {
+        try {
+            const [usersRes, bookingsRes, reportsRes, messagesRes] = await Promise.all([
+                fetch('/api/users'),
+                fetch('/api/bookings'),
+                fetch('/api/reports'),
+                fetch('/api/messages')
+            ]);
+            
+            const users = await usersRes.json();
+            const bookings = await bookingsRes.json();
+            const reports = await reportsRes.json();
+            const messages = await messagesRes.json();
+
+            // Total users
+            document.getElementById('totalUsers').textContent = users.length;
+
+            // Total bookings
+            document.getElementById('totalBookings').textContent = bookings.length;
+
+            // Active bookings
+            const activeBookings = bookings.filter(b => b.status === 'active');
+            document.getElementById('activeBookings').textContent = activeBookings.length;
+
+            // Pending reports
+            const pendingReports = reports.filter(r => r.status === 'pending');
+            document.getElementById('pendingReports').textContent = pendingReports.length;
+
+            // Revenue (this month)
+            const now = new Date();
+            const thisMonthBookings = bookings.filter(b => {
+                const d = new Date(b.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            const revenue = thisMonthBookings.reduce((sum, b) => sum + (b.amount || 0), 0);
+            document.getElementById('totalRevenue').textContent = `K${revenue.toLocaleString()}`;
+
+            // Active users (simulate as users with at least one booking in the last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(now.getDate() - 30);
+            const activeUserIds = new Set(
+                bookings.filter(b => new Date(b.date) >= thirtyDaysAgo).map(b => b.userId)
+            );
+            document.getElementById('activeUsersCount').textContent = activeUserIds.size;
+            document.getElementById('activeUsersText').textContent = `${activeUserIds.size} users online`;
+
+            // Unread messages (not sent by admin and status is 'delivered' or 'unread')
+            const unreadMessages = messages.filter(m => m.sender !== 'admin' && (!m.status || m.status === 'delivered' || m.status === 'unread'));
+            document.getElementById('unreadMessagesCount').textContent = unreadMessages.length;
+
+            // Users Booked Team (unique users who booked)
+            const usersBookedTeam = new Set(bookings.map(b => b.userId));
+            document.getElementById('usersBookedTeam').textContent = usersBookedTeam.size;
+
+            // Booking IDs (comma separated)
+            document.getElementById('bookingIds').textContent =
+                bookings.length > 0 ? bookings.map(b => b.id).join(', ') : '-';
+
+            // Recent calls (simulate as 0 unless you have a /api/calls endpoint)
+            document.getElementById('recentCallsCount').textContent = '0';
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+        }
+    }
+    
+    // Load teams
+    async function loadTeams() {
+      try {
+        const response = await fetch('/api/teams');
+        const teams = await response.json();
+        renderTeams(teams);
+      } catch (error) {
+        console.error('Error loading teams:', error);
+      }
+    }
+    
+    // Render teams table
+    function renderTeams(teams) {
+      const tbody = document.getElementById('teamsTableBody');
+      tbody.innerHTML = '';
+      
+      teams.forEach(team => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${team.name}</td>
+          <td>${team.type}</td>
+          <td>${team.leader}</td>
+          <td>${team.members.length}</td>
+          <td>K${team.price.toLocaleString()}</td>
+          <td>
+            <button class="btn btn-primary view-team-btn" data-id="${team.id}">View</button>
+            <button class="btn btn-danger delete-team-btn" data-id="${team.id}">Delete</button>
+          </td>
+        `;
+
+        // View team
+        row.querySelector('.view-team-btn').addEventListener('click', async () => {
+          // Fetch team details if needed
+          let t = team;
+          if (!team.members || !Array.isArray(team.members)) {
+            try {
+              const res = await fetch(`/api/teams/${team.id}`);
+              t = await res.json();
+            } catch (e) {}
+          }
+          document.getElementById('viewTeamName').textContent = t.name;
+          document.getElementById('viewTeamLeader').textContent = t.leader;
+          document.getElementById('viewTeamRating').textContent = t.rating || '-';
+          document.getElementById('viewTeamDescription').textContent = t.description || '-';
+          const membersDiv = document.getElementById('viewTeamMembers');
+          membersDiv.innerHTML = '';
+          (t.members || []).forEach(m => {
+            const div = document.createElement('div');
+            div.textContent = m;
+            membersDiv.appendChild(div);
+          });
+          document.getElementById('viewTeamModal').style.display = 'flex';
+        });
+
+        // Delete team
+        row.querySelector('.delete-team-btn').addEventListener('click', async () => {
+          if (confirm('Are you sure you want to delete this team?')) {
+            try {
+              const token = localStorage.getItem('token');
+              if (!token) {
+                alert('Authentication token not found. Please log in again.');
+                return;
+              }
+              const res = await fetch(`/api/teams/${team.id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                  // Do NOT include 'Content-Type' for DELETE unless you send a body
+                }
+                // No body for DELETE
+              });
+
+              // Try to parse JSON only if response has content
+              let errorData = {};
+              if (!res.ok) {
+                try {
+                  errorData = await res.json();
+                } catch (e) {}
+                console.error('Failed to delete team:', errorData);
+                alert(`Failed to delete team: ${errorData.error || res.statusText}`);
+              } else {
+                loadTeams();
+              }
+            } catch (error) {
+              console.error('Error deleting team:', error);
+              alert(`Error deleting team: ${error.message}`);
+            }
+          }
+        });
+        
+      });
+    }
+    
+    // Load bookings
+    async function loadBookings() {
+      try {
+        const response = await fetch('/api/bookings');
+        const bookings = await response.json();
+        renderBookings(bookings);
+      } catch (error) {
+        console.error('Error loading bookings:', error);
+      }
+    }
+    
+    // Render bookings table
+    function renderBookings(bookings) {
+      const tbody = document.getElementById('bookingsTableBody');
+      tbody.innerHTML = '';
+      
+      bookings.forEach(booking => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${booking.id}</td>
+          <td>${booking.teamId}</td>
+          <td>${booking.userId}</td>
+          <td>${new Date(booking.date).toLocaleDateString()}</td>
+          <td>K${booking.amount.toLocaleString()}</td>
+          <td>
+            <span class="badge ${
+              booking.status === 'confirmed' ? 'badge-success' :
+              booking.status === 'pending' ? 'badge-warning' : 'badge-danger'
+            }">${booking.status}</span>
+          </td>
+        `;
+      });
+    }
+    
+    // Load messages
+    async function loadMessages() {
+      try {
+        const response = await fetch('/api/messages');
+        const messages = await response.json();
+        renderMessages(messages);
+        renderUserChats(messages); // <-- update user chats
+      } catch (error) {
+        console.error('Error loading messages:', error);
+      }
+    }
+    
+    // Render messages table (with Name/Email lookup)
+    async function renderMessages(messages) {
+      const tbody = document.getElementById('messagesTableBody');
+      tbody.innerHTML = '';
+    
+      // Group messages by user
+      const userMessages = {};
+      messages.forEach(msg => {
+        if (!userMessages[msg.userId]) {
+          userMessages[msg.userId] = [];
+        }
+        userMessages[msg.userId].push(msg);
+      });
+    
+      // Fetch users for name/email mapping
+      let usersMap = {};
+      try {
+        const usersRes = await fetch('/api/users');
+        const users = await usersRes.json();
+        users.forEach(u => usersMap[u.id] = u);
+      } catch (e) {}
+    
+      Object.entries(userMessages).forEach(([userId, msgs]) => {
+        const latestMsg = msgs[msgs.length - 1];
+        const user = usersMap[userId] || {};
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${user.name || 'User ' + userId}</td>
+          <td>${user.email || latestMsg.email || '-'}</td>
+          <td>${latestMsg.content.substring(0, 50)}${latestMsg.content.length > 50 ? '...' : ''}</td>
+          <td>${new Date(latestMsg.timestamp).toLocaleString()}</td>
+          <td>${latestMsg.status || '-'}</td>
+          <td>
+            <button class="btn btn-primary reply-btn" data-userid="${userId}">Reply</button>
+          </td>
+        `;
+        row.querySelector('.reply-btn').addEventListener('click', () => {
+          openChatWithUser(userId, msgs);
+          messagesModal.style.display = 'none';
+        });
+      });
+    }
+    
+    // Open chat with user
+    function openChatWithUser(userId, messages = []) {
+      // Fetch user name for chat header
+      fetch('/api/users')
+        .then(res => res.json())
+        .then(users => {
+          const user = users.find(u => u.id == userId);
+          document.getElementById('chatWithUser').textContent = `Chat with ${user ? user.name : 'User ' + userId}`;
+        })
+        .catch(() => {
+          document.getElementById('chatWithUser').textContent = `Chat with User ${userId}`;
+        });
+    
+      currentConversation = userId;
+      document.getElementById('adminChatWindow').style.display = 'block';
+    
+      if (!activeConversations[userId]) {
+        activeConversations[userId] = {
+          userId: userId,
+          messages: messages
+        };
+      }
+      renderChatMessages();
+    }
+    
+    // Render chat messages
+    function renderChatMessages() {
+      if (!currentConversation) return;
+      
+      const chatMessages = document.getElementById('adminChatMessages');
+      chatMessages.innerHTML = '';
+      
+      const conversation = activeConversations[currentConversation];
+      if (conversation && conversation.messages) {
+        conversation.messages.forEach(msg => {
+          const div = document.createElement('div');
+          div.className = `message ${msg.sender === 'admin' ? 'sent' : 'received'}`;
+          
+          const time = new Date(msg.timestamp);
+          const timeStr = time.toLocaleTimeString();
+          
+          div.innerHTML = `
+            <div class="message-content">${msg.content}</div>
+            <div class="message-time">${timeStr}</div>
+          `;
+          chatMessages.appendChild(div);
+        });
+        
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+    
+    // Send admin message
+    document.getElementById('adminSendBtn').addEventListener('click', function() {
+      const input = document.getElementById('adminChatInput');
+      const text = input.value.trim();
+      
+      if (text && currentConversation && adminSocket.readyState === WebSocket.OPEN) {
+        const message = {
+          type: 'message',
+          content: text,
+          userId: currentConversation,
+          sender: 'admin',
+          to: currentConversation,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Send via WebSocket
+        adminSocket.send(JSON.stringify(message));
+        
+        // Add to local conversation
+        if (!activeConversations[currentConversation]) {
+          activeConversations[currentConversation] = {
+            userId: currentConversation,
+            messages: []
+          };
+        }
+        
+        activeConversations[currentConversation].messages.push(message);
+        renderChatMessages();
+        input.value = '';
+        
+        // Save to database
+        fetch('/api/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            userId: currentConversation,
+            content: text,
+            to: currentConversation,
+            sender: 'admin'
+          })
+        }).then(() => {
+          // After sending, refresh messages modal if open
+          if (messagesModal.style.display === 'flex') {
+            loadMessages();
+          }
+        }).catch(error => {
+          console.error('Error saving message:', error);
+        });
+      }
+    });
+    
+    // Close chat
+    document.getElementById('closeChatBtn').addEventListener('click', function() {
+      document.getElementById('adminChatWindow').style.display = 'none';
+      currentConversation = null;
+    });
+    
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+      localStorage.removeItem('token');
+      window.location.href = '/trial.html';
+    });
+
+// --- Add Team Modal Logic ---
+const addTeamBtn = document.getElementById('addTeamBtn');
+const addTeamModal = document.getElementById('addTeamModal');
+const closeAddModal = document.getElementById('closeAddModal');
+const cancelAddBtn = document.getElementById('cancelAddBtn');
+const teamForm = document.getElementById('teamForm');
+const memberList = document.getElementById('memberList');
+const addMemberBtn = document.getElementById('addMemberBtn');
+
+// Open modal
+addTeamBtn.addEventListener('click', () => {
+  addTeamModal.style.display = 'flex';
+});
+
+// Close modal
+closeAddModal.addEventListener('click', () => {
+  addTeamModal.style.display = 'none';
+});
+cancelAddBtn.addEventListener('click', () => {
+  addTeamModal.style.display = 'none';
+});
+
+// Add member
+addMemberBtn.addEventListener('click', () => {
+  const div = document.createElement('div');
+  div.className = 'member-item';
+  div.innerHTML = `
+    <input type="text" placeholder="Member name" class="member-name" required>
+    <div class="member-actions">
+      <button type="button" class="btn btn-danger btn-sm remove-member">Remove</button>
+    </div>
+  `;
+  memberList.appendChild(div);
+  div.querySelector('.remove-member').addEventListener('click', () => div.remove());
+});
+
+// Remove member (for initial member)
+memberList.querySelectorAll('.remove-member').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.target.closest('.member-item').remove();
+  });
+});
+
+// Handle team form submit
+teamForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  // Gather members
+  const members = Array.from(memberList.querySelectorAll('.member-name'))
+    .map(input => input.value.trim())
+    .filter(name => name);
+
+  if (members.length === 0) {
+    alert('Please add at least one team member.');
+    return;
+  }
+
+  const team = {
+    name: document.getElementById('teamName').value.trim(),
+    type: document.getElementById('teamType').value.trim(),
+    location: document.getElementById('teamLocation').value.trim(),
+    price: Number(document.getElementById('teamPrice').value),
+    leader: document.getElementById('teamLeader').value.trim(),
+    description: document.getElementById('teamDescription').value.trim(),
+    rating: Number(document.getElementById('teamRating').value),
+    members
+  };
+
+  try {
+    const token = localStorage.getItem('token');
+    // Show loading state on submit button
+    const submitBtn = teamForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Adding...';
+
+    const response = await fetch('/api/teams', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(team)
+    });
+
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (err) {
+      // ignore JSON parse error
+    }
+
+    if (!response.ok) {
+      alert(data.error || 'Failed to add team');
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+      return;
+    }
+
+    addTeamModal.style.display = 'none';
+    teamForm.reset();
+    // Remove all but one member input
+    while (memberList.children.length > 1) memberList.lastChild.remove();
+    loadTeams();
+  } catch (err) {
+    alert('Error adding team: ' + err.message);
+  } finally {
+    // Restore submit button state
+    const submitBtn = teamForm.querySelector('button[type="submit"]');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Add Team';
+    }
+  }
+});
+
+// --- Sidebar Messages Modal Logic ---
+const viewMessagesBtn = document.getElementById('viewMessagesBtn');
+const messagesModal = document.getElementById('messagesModal');
+const closeMessagesModal = document.getElementById('closeMessagesModal');
+const closeMessagesBtn = document.getElementById('closeMessagesBtn');
+
+// Open messages modal from sidebar
+viewMessagesBtn.addEventListener('click', () => {
+  messagesModal.style.display = 'flex';
+  // Always refresh messages when opening
+  loadMessages();
+});
+
+// Close messages modal
+closeMessagesModal.addEventListener('click', () => {
+  messagesModal.style.display = 'none';
+});
+closeMessagesBtn.addEventListener('click', () => {
+  messagesModal.style.display = 'none';
+});
+
+// Update renderMessages to show latest message and allow reply
+function renderMessages(messages) {
+  const tbody = document.getElementById('messagesTableBody');
+  tbody.innerHTML = '';
+
+  // Group messages by user
+  const userMessages = {};
+  messages.forEach(msg => {
+    if (!userMessages[msg.userId]) {
+      userMessages[msg.userId] = [];
+    }
+    userMessages[msg.userId].push(msg);
+  });
+
+  Object.entries(userMessages).forEach(([userId, msgs]) => {
+    const latestMsg = msgs[msgs.length - 1];
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td>User ${userId}</td>
+      <td>${latestMsg.email || '-'}</td>
+      <td>${latestMsg.content.substring(0, 50)}${latestMsg.content.length > 50 ? '...' : ''}</td>
+      <td>${new Date(latestMsg.timestamp).toLocaleString()}</td>
+      <td>${latestMsg.status || '-'}</td>
+      <td><button class="btn btn-primary reply-btn" data-userid="${userId}">Reply</button></td>
+    `;
+
+    // Reply button opens chat window
+    row.querySelector('.reply-btn').addEventListener('click', () => {
+      openChatWithUser(userId, msgs);
+      messagesModal.style.display = 'none';
+    });
+  });
+}
+
+// --- Real-time update: When a new message arrives, update sidebar messages modal ---
+function handleAdminMessage(data) {
+  console.log('Received admin WS message:', data); // DEBUG LOG
+  if (data.type === 'init-data') {
+    updateDashboard(data);
+  } 
+  else if (data.type === 'user-connected' || data.type === 'user-disconnected') {
+    updateUserCount(data.count);
+  } 
+  else if (data.type === 'new-message') {
+    // Add message to conversation and show notification if needed
+    const { userId, content, sender, timestamp, email, status } = data;
+    // Always update the conversation in memory
+    if (!activeConversations[userId]) {
+      activeConversations[userId] = { userId, messages: [] };
+    }
+    activeConversations[userId].messages.push({ userId, content, sender, timestamp, email, status });
+
+    // If chat is open with this user, re-render
+    if (currentConversation === userId) renderChatMessages();
+
+    // Always update the messages modal, even if not open
+    // Instead of only updating if modal is open, always call loadMessages to keep the sidebar in sync
+    loadMessages();
+
+    // Show notification
+    showAdminNotification(`New message from User ${userId}: "${content ? content.substring(0, 30) : ''}${content && content.length > 30 ? '...' : ''}"`);
+  }
+  else if (data.type === 'incoming-call') {
+    showAdminNotification(`Incoming call from User ${data.userId}${data.number ? ' (' + data.number + ')' : ''}`);
+  }
+}
+
+// --- Ensure sent admin messages also update the sidebar messages modal ---
+document.getElementById('adminSendBtn').addEventListener('click', function() {
+  const input = document.getElementById('adminChatInput');
+  const text = input.value.trim();
+
+  if (text && currentConversation && adminSocket.readyState === WebSocket.OPEN) {
+    const message = {
+      type: 'message',
+      content: text,
+      userId: currentConversation,
+      sender: 'admin',
+      to: currentConversation,
+      timestamp: new Date().toISOString()
+    };
+
+    // Send via WebSocket
+    adminSocket.send(JSON.stringify(message));
+
+    // Add to local conversation
+    if (!activeConversations[currentConversation]) {
+      activeConversations[currentConversation] = {
+        userId: currentConversation,
+        messages: []
+      };
+    }
+
+    activeConversations[currentConversation].messages.push(message);
+    renderChatMessages();
+    input.value = '';
+
+    // Save to database
+    fetch('/api/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        userId: currentConversation,
+        content: text,
+        to: currentConversation,
+        sender: 'admin'
+      })
+    }).then(() => {
+      // After sending, refresh messages modal if open
+      if (messagesModal.style.display === 'flex') {
+        loadMessages();
+      }
+    }).catch(error => {
+      console.error('Error saving message:', error);
+    });
+  }
+});
+
+// --- View Team Modal Close ---
+document.getElementById('closeViewModal').addEventListener('click', () => {
+  document.getElementById('viewTeamModal').style.display = 'none';
+});
+document.getElementById('closeViewBtn').addEventListener('click', () => {
+  document.getElementById('viewTeamModal').style.display = 'none';
+});
+
+    // Notification function (improved for stacking and fade)
+    function showAdminNotification(message, duration = 4000) {
+      let notif = document.getElementById('adminNotification');
+      if (!notif) {
+        notif = document.createElement('div');
+        notif.id = 'adminNotification';
+        notif.style.position = 'fixed';
+        notif.style.top = '30px';
+        notif.style.right = '30px';
+        notif.style.zIndex = '9999';
+        notif.style.background = '#3498db';
+        notif.style.color = '#fff';
+        notif.style.padding = '16px 28px';
+        notif.style.borderRadius = '8px';
+        notif.style.boxShadow = '0 4px 16px rgba(0,0,0,0.15)';
+        notif.style.fontSize = '16px';
+        notif.style.minWidth = '220px';
+        notif.style.display = 'none';
+        notif.style.transition = 'opacity 0.5s';
+        document.body.appendChild(notif);
+      }
+      notif.textContent = message;
+      notif.style.display = 'block';
+      notif.style.opacity = '1';
+      clearTimeout(notif._hideTimeout);
+      notif._hideTimeout = setTimeout(() => {
+        notif.style.opacity = '0';
+        setTimeout(() => { notif.style.display = 'none'; }, 500);
+      }, duration);
+    }
+
+// --- Render user message points in sidebar ---
+async function renderUserMessagePoints(messages) {
+  const messagesList = document.getElementById('messagesList');
+  // Remove old user message points (keep the first 3 li)
+  while (messagesList.children.length > 3) messagesList.removeChild(messagesList.lastChild);
+
+  // Group messages by userId
+  const userMessages = {};
+  messages.forEach(msg => {
+    if (!userMessages[msg.userId]) userMessages[msg.userId] = [];
+    userMessages[msg.userId].push(msg);
+  });
+
+  // Fetch users for name mapping
+  let usersMap = {};
+  try {
+    const usersRes = await fetch('/api/users');
+    const users = await usersRes.json();
+    users.forEach(u => usersMap[u.id] = u);
+  } catch (e) {}
+
+  Object.entries(userMessages).forEach(([userId, msgs]) => {
+    const latestMsg = msgs[msgs.length - 1];
+    const user = usersMap[userId] || {};
+    const li = document.createElement('li');
+    li.style.cursor = 'pointer';
+    li.textContent = `${user.name || 'User ' + userId}: ${latestMsg.content.substring(0, 20)}${latestMsg.content.length > 20 ? '...' : ''}`;
+    li.title = latestMsg.content;
+    li.onclick = () => openSidebarChat(userId, user.name || ('User ' + userId), msgs);
+    messagesList.appendChild(li);
+  });
+}
+
+// --- Sidebar chat logic ---
+function openSidebarChat(userId, userName, messages = []) {
+  // Show chat window
+  document.getElementById('adminChatWindow').style.display = 'block';
+  document.getElementById('chatWithUser').textContent = `Chat with ${userName}`;
+  currentConversation = userId;
+
+  // Store conversation if not already exists
+  if (!activeConversations[userId]) {
+    activeConversations[userId] = {
+      userId: userId,
+      messages: messages
+    };
+  } else if (messages.length > 0) {
+    activeConversations[userId].messages = messages;
+  }
+
+  renderChatMessages();
+}
+
+// --- Render user chat triggers and chat windows ---
+async function renderUserChats(messages) {
+  const messagesList = document.getElementById('messagesList');
+  // Remove old user chat triggers (keep the first 3 li)
+  while (messagesList.children.length > 3) messagesList.removeChild(messagesList.lastChild);
+
+  // Remove old chat windows
+  const userChatsContainer = document.getElementById('userChatsContainer');
+  userChatsContainer.innerHTML = '';
+
+  // Group messages by userId, only those sent by user (not admin)
+  const userMessages = {};
+  messages.forEach(msg => {
+    if (msg.sender !== 'admin') {
+      if (!userMessages[msg.userId]) userMessages[msg.userId] = [];
+      userMessages[msg.userId].push(msg);
+    }
+  });
+
+  // Fetch users for name mapping
+  let usersMap = {};
+  try {
+    const usersRes = await fetch('/api/users');
+    const users = await usersRes.json();
+    users.forEach(u => usersMap[u.id] = u);
+  } catch (e) {}
+
+  Object.entries(userMessages).forEach(([userId, msgs]) => {
+    const latestMsg = msgs[msgs.length - 1];
+    const user = usersMap[userId] || {};
+    // Sidebar trigger
+    const li = document.createElement('li');
+    li.style.cursor = 'pointer';
+    li.textContent = `${user.name || 'User ' + userId}: ${latestMsg.content.substring(0, 20)}${latestMsg.content.length > 20 ? '...' : ''}`;
+    li.title = latestMsg.content;
+    li.onclick = () => showUserChat(userId, user.name || ('User ' + userId), msgs);
+    messagesList.appendChild(li);
+
+    // Chat window (hidden by default)
+    const chatDiv = document.createElement('div');
+    chatDiv.className = 'chat-window';
+    chatDiv.id = `userChatWindow_${userId}`;
+    chatDiv.style.display = 'none';
+    chatDiv.innerHTML = `
+      <div class="chat-header">
+        <span>Chat with ${user.name || 'User ' + userId}</span>
+        <button class="close-btn" onclick="document.getElementById('userChatWindow_${userId}').style.display='none'">&times;</button>
+      </div>
+      <div class="chat-messages" id="userChatMessages_${userId}"></div>
+      <div class="chat-input">
+        <input type="text" id="userChatInput_${userId}" placeholder="Type a message...">
+        <button onclick="sendAdminReplyToUser('${userId}')">Send</button>
+      </div>
+    `;
+    userChatsContainer.appendChild(chatDiv);
+
+    // Render messages for this chat
+    renderUserChatMessages(userId, msgs);
+  });
+}
+
+// Show the chat window for a user
+function showUserChat(userId, userName, messages) {
+  // Hide all chat windows first
+  document.querySelectorAll('.chat-window[id^="userChatWindow_"]').forEach(div => div.style.display = 'none');
+  // Show this user's chat
+  const chatDiv = document.getElementById(`userChatWindow_${userId}`);
+  if (chatDiv) chatDiv.style.display = 'block';
+  // Render messages (in case new ones arrived)
+  renderUserChatMessages(userId, messages);
+}
+
+// Render messages for a user's chat window
+function renderUserChatMessages(userId, messages) {
+  const chatMessagesDiv = document.getElementById(`userChatMessages_${userId}`);
+  if (!chatMessagesDiv) return;
+  chatMessagesDiv.innerHTML = '';
+  messages.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = `message ${msg.sender === 'admin' ? 'sent' : 'received'}`;
+    div.innerHTML = `
+      <div>${msg.content}</div>
+      <span class="time">${new Date(msg.timestamp).toLocaleTimeString()}</span>
+    `;
+    chatMessagesDiv.appendChild(div);
+  });
+  chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+}
+
+// Send admin reply in user chat
+window.sendAdminReplyToUser = function(userId) {
+  const input = document.getElementById(`userChatInput_${userId}`);
+  const text = input.value.trim();
+  if (!text || !adminSocket || adminSocket.readyState !== WebSocket.OPEN) return;
+  const message = {
+    type: 'message',
+    content: text,
+    userId: userId,
+    sender: 'admin',
+    to: userId,
+    timestamp: new Date().toISOString()
+  };
+  adminSocket.send(JSON.stringify(message));
+  // Add to local conversation
+  if (!activeConversations[userId]) activeConversations[userId] = { userId, messages: [] };
+  activeConversations[userId].messages.push(message);
+  renderUserChatMessages(userId, activeConversations[userId].messages);
+  input.value = '';
+  // Save to database
+  fetch('/api/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify({
+      userId: userId,
+      content: text,
+      to: userId,
+      sender: 'admin'
+    })
+  });
+};
+
+    // Render function for the debug chat bot panel
+    function renderAdminChatBotMessages() {
+      const panel = document.getElementById('adminChatBotMessages');
+      if (!panel) return;
+      panel.innerHTML = '';
+      adminChatBotMessages.slice(-50).forEach(msg => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '8px';
+        div.innerHTML = `<span style="color:#3498db;font-weight:bold;">User ${msg.userId}:</span> ${msg.content}<br>
+          <span style="font-size:11px;color:#888;">${new Date(msg.timestamp).toLocaleTimeString()}</span>`;
+        panel.appendChild(div);
+      });
+      panel.scrollTop = panel.scrollHeight;
+    }
+
+    </script>
+    <style>
+      .message-time {
+        font-size: 11px;
+        color: #999;
+        margin-top: 4px;
+      }
+      
+      .sent .message-time {
+        text-align: right;
+      }
+      
+      .received .message-time {
+        text-align: left;
+      }
+      
+      #newMessageBadge {
+        background: #e74c3c;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 12px;
+        margin-left: 5px;
+      }
+    </style>
+</body>
+</html>
